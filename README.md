@@ -8,9 +8,9 @@ Tested on Ubuntu 12.04
 
 ## Usage
 
-### mysql-replication-listener::source
+### imagemagick::source
 
-Include `mysql-replication-listener` in your node's `run_list`:
+Include `imagemagick` in your node's `run_list`:
 
 ```json
 {
