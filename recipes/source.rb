@@ -7,19 +7,29 @@ package 'liblzma-dev'
 
 remote_file "#{Chef::Config[:file_cache_path]}/tiff-4.0.3.tar.gz" do
   source "ftp://ftp.remotesensing.org/pub/libtiff/tiff-4.0.3.tar.gz"
-  notifies :run, "bash[install-libtiff4]"
 end
 
-bash 'install-libtiff4' do
+bash "untar_tiff_403" do
   cwd "#{Chef::Config[:file_cache_path]}"
   code <<-EOH
     tar -xzvf tiff-4.0.3.tar.gz
-    cd tiff-4.0.3
+  EOH
+  not_if { ::File.directory?("#{Chef::Config['file_cache_path'] || '/tmp'}/tiff-4.0.3") }
+end
+
+bash 'install-libtiff4' do
+  cwd "#{Chef::Config[:file_cache_path]}/tiff-4.0.3"
+
+  code <<-EOH
     ./configure
     make
     make install
   EOH
-  action :nothing
+
+  # HELP! Add idempotence
+  # not_if do
+  # end
+
 end
 
 package 'libtiff4' do
@@ -28,20 +38,29 @@ end
 
 remote_file "#{Chef::Config[:file_cache_path]}/ImageMagick-6.8.8-10.tar.gz" do
   source "http://www.imagemagick.org/download/ImageMagick-6.8.8-10.tar.gz"
-  notifies :run, "bash[install-imagemagick]"
+end
+
+bash 'untar_imagemagick' do
+  cwd "#{Chef::Config[:file_cache_path]}"
+
+  code <<-EOH
+    tar -xzvf ImageMagick-6.8.8-10.tar.gz
+  EOH
+  not_if { ::File.directory?("#{Chef::Config['file_cache_path'] || '/tmp'}/ImageMagick-6.8.8-10") }
 end
 
 bash 'install-imagemagick' do
-  cwd "#{Chef::Config[:file_cache_path]}"
-  code <<-EOH
+  cwd "#{Chef::Config[:file_cache_path]}/ImageMagick-6.8.8-10"
 
-    tar -xzvf ImageMagick-6.8.8-10.tar.gz
-    cd ImageMagick-6.8.8-10
+  code <<-EOH
     ./configure
     make
     make install
     ldconfig /usr/local/lib
   EOH
-  action :nothing
+
+  # HELP! Add idempotence
+  # not_if do
+  # end
 end
 
